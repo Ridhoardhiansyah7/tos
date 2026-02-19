@@ -1,0 +1,26 @@
+name: Build and Patch Firmware
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install GCC
+      run: sudo apt update && sudo apt install -y build-essential
+
+    - name: Compile
+      run: gcc src/patch.c -o patch
+
+    - name: Run patch
+      run: ./patch firmware/tos-sign.bin
+
+    - name: Upload result
+      uses: actions/upload-artifact@v4
+      with:
+        name: patched
+        path: tos-noavb.bin
